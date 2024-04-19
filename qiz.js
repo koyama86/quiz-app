@@ -55,7 +55,7 @@ const startbtn = document.getElementById("startbtn");
 const questionNumber = document.getElementById("questionNumber");
 let questionText = document.getElementById("questionText");
 const optionbtn = document.querySelectorAll("#questionPage button");
-const questionProgress= document.getElementById("questionProgress");
+const questionProgress = document.getElementById("questionProgress");
 
 let resultMsg = document.getElementById("resultMessege");
 const backbtn = document.getElementById("backBtn");
@@ -64,7 +64,7 @@ const dialog = document.getElementById("dialog");
 const questionResult = document.getElementById("questionResult");
 const nextButton = document.getElementById("nextButton");
 
-let startTime =null;
+let startTime = null;
 
 
 // 処理
@@ -81,14 +81,15 @@ nextButton.addEventListener("click", clickNextBtn);
 backbtn.addEventListener("click", clickBackBtn);
 // 関数一覧
 
-function questionTimeOver(){
+function questionTimeOver() {
     questionResult.innerText = "x"
-    if(isQuestionEnd()){
-        nextButton.innerText ="結果を見る";
+    if (isQuestionEnd()) {
+        nextButton.innerText = "結果を見る";
 
-    }else{
-        nextButton.innerText ="つぎのもんだいへ"
+    } else {
+        nextButton.innerText = "つぎのもんだいへ"
     }
+    dialog.showModal();
 }
 
 
@@ -166,9 +167,9 @@ function clickOptionBtn(event) {
 function clickStartBtn() {
     reset();
     setQuestion();
-    startProgress();
+    // startProgress();
     // 画面に入るちょくぜんにけす
-    dialog.close();
+    startProgress();
     // スタート画面を非表示にする
     startPage.classList.add("hidden");
     // 問題画面を表示する
@@ -181,9 +182,9 @@ function clickNextBtn() {
 
     if (isQuestionEnd()) {
         setResult();
+        dialog.close();
         startPage.classList.add("hidden");
         questionPage.classList.add("hidden");
-        // 結果画面を非表示にする
         resultPage.classList.remove("hidden");
     } else {
         questionIndex++;
@@ -194,27 +195,31 @@ function clickNextBtn() {
             optionbtn[i].removeAttribute("disabled")
         }
     }
-    dialog.close()
+    dialog.close();
+    startProgress();
 
 }
 
-function clickBackBtn(){
+function clickBackBtn() {
     startPage.classList.remove("hidden");
     questionPage.classList.add("hidden");
     resultPage.classList.add("hidden");
 }
-intercalId= setInterval(() => {
-    startTime = DATE .now();
-    const progress = (elapsedTime -startTime/answer_time_ms)*100;
-    const currentTome = Date.now();
-    questionProgress.value=progress;
-    if(answer_time_ms <= elapsedTime){
-        stopPrpgress();
-        questionTimeOver();
-        return;
-    }
-    elapsedTime +=interval_time_ms;
-}, interval_time_ms);
+function startProgress() {
+    startTime = Date.now();
+
+    intercalId = setInterval(() => {
+        const currentTome = Date.now();
+        const progress = ((currentTome - startTime) / answer_time_ms) * 100;
+
+        questionProgress.value = progress;
+        if (startTime + answer_time_ms <= currentTome) {
+            stopPrpgress();
+            questionTimeOver();
+            return;
+        }
+        // elapsedTime +=interval_time_ms;
+    }, interval_time_ms);
     // intercalId= setInterval(() => {
     //     const progress = (elapsedTime/answer_time_ms)*100;
     //     questionProgress.value=progress;
@@ -224,25 +229,25 @@ intercalId= setInterval(() => {
     //     }
     //     elapsedTime +=interval_time_ms;
     // }, interval_time_ms);
+}
 
 
-function stopPrpgress(){
-    if(intercalId !==null){
-        clearInterval(inrervalId;)
+
+function stopPrpgress() {
+    if (intercalId !== null) {
+        clearInterval(intercalId);
+        intercalId = null;
     }
 }
-function reset(){
 
-}
 
-function reset(){
+function reset() {
     questions = getRandomQuestions();
     questionIndex = 0;
     correctCount = 0;
-    let intercalId = null;
-// 経過時間
-let elapsedTime = 0;
-    for(let i =0;i<optionbtn.length;i++){
+     intercalId = null;
+     elapsedTime = 0;
+    for (let i = 0; i < optionbtn.length; i++) {
         optionbtn[i].removeAttribute("disabled");
     }
 }
